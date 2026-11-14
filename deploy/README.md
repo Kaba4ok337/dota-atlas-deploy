@@ -27,7 +27,7 @@
 
 ## Подготовка
 
-Требуются работающий Docker с Compose, доступ текущего пользователя к демону Docker и установленный `mkcert`. Папки `dota-atlas-practice` и `DotaCodex_project` должны находиться рядом; в корне проекта должен находиться `.env` с существующей `DATABASE_URL`. Пути можно изменить в `docker-compose.yml`. Команды ниже выполняются из папки `dota-atlas-practice/deploy`:
+Требуются работающий Docker с Compose, доступ текущего пользователя к демону Docker и установленный `mkcert`. Папки `dota-atlas-practice` и `DotaCodex_project` должны находиться рядом; в корне проекта должен находиться `.env` с существующей `DATABASE_URL`. Исходный код для этой работы опубликован в [ветке practice18-deploy-ci](https://github.com/Kaba4ok337/dota-atlas/tree/practice18-deploy-ci); при другом расположении каталогов измените пути в `docker-compose.yml`. Команды ниже выполняются из папки `dota-atlas-practice/deploy`:
 
 ```bash
 mkdir -p certs
@@ -51,7 +51,7 @@ docker compose down
 
 ## CI
 
-В репозитории приложения `.github/workflows/docker-build.yml` проверяет сборку образа при push, pull request и ручном запуске. Он не требует секретов и не публикует образ. Существующий workflow `ci.yml` сохранён; его шаг `db:setup` изменяет указанную в секрете базу, поэтому используйте для него отдельную учебную базу.
+В [ветке приложения](https://github.com/Kaba4ok337/dota-atlas/tree/practice18-deploy-ci) файл `.github/workflows/docker-build.yml` проверяет сборку образа при push, pull request и ручном запуске. Он не требует секретов и не публикует образ. [Проверка сборки прошла успешно](https://github.com/Kaba4ok337/dota-atlas/actions/runs/43585274119). Существующий workflow `ci.yml` в этой ветке переведён на ручной запуск: его шаг `db:setup` изменяет указанную в секрете базу, поэтому используйте для него отдельную учебную базу.
 
 ## Подтверждения для отчёта
 
@@ -67,12 +67,16 @@ docker compose down
 
 ![Запрос API](screenshots/network-api.jpg)
 
+Успешная сборка в GitHub Actions:
+
+![Сборка Docker в GitHub Actions](screenshots/github-actions.jpg)
+
 ### Состояние проверки
 
 - Образ приложения собран; контейнеры app и nginx запущены, порты nginx привязаны к `127.0.0.1`.
 - HTTP перенаправляет на HTTPS, главная страница отвечает 200, сертификат проходит системную проверку, заголовок `X-Robots-Tag` присутствует.
 - После возобновления проекта Supabase запросы к `/api/health`, `/api/heroes?summary=1` и `/api/patches` возвращают 200.
-- Снимок списка контейнеров сделан через Docker Compose в терминале; отдельный снимок Docker Desktop не подготовлен. GitHub Actions пока не запущен.
+- GitHub Actions успешно собрал Docker-образ в отдельной ветке. Снимок списка контейнеров сделан через Docker Compose в терминале; отдельный снимок Docker Desktop пока не подготовлен.
 
 ### Ошибки и решения
 
